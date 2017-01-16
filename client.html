@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>クライアント</title>
+  </head>
+  <body>
+    <div id="output"></div>
+    <script src='https://cdn.mlkcca.com/v0.6.0/milkcocoa.js'></script>
+    <script>
+    window.onload = function(){
+      var currentMode = 'portrait';
+      var output = document.getElementById('output');
+      var milkcocoa = new MilkCocoa("dogiy07qij5.mlkcca.com");
+      var ds = milkcocoa.dataStore('gravity');
+      window.addEventListener('devicemotion', function(e){
+        gravity = e.accelerationIncludingGravity;
+        output.innerHTML = 'x方向: '+gravity.x+ '<br>y方向: '+gravity.y;
+        sendModeFromGravityValue(gravity);
+      },true);
+      function sendModeFromGravityValue(g){
+         var x = Math.abs(g.x);
+         var y = Math.abs(g.y);
+         if(currentMode === 'portrait' && x > 8.5 && y < 1.5){
+           currentMode = 'landscape';
+           ds.send({mode: currentMode});
+         }
+         if(currentMode === 'landscape' && x < 1.5 && y > 8.5){
+           currentMode = 'portrait';
+           ds.send({mode: currentMode});
+         }
+       }
+     };
+    </script>
+  </body>
+</html>
